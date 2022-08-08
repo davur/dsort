@@ -43,6 +43,8 @@ Options:
 
 # Example
 
+## Bring preferred keys to the top
+
 ```bash
 $ cat example.yaml
 ```
@@ -79,4 +81,99 @@ data:
   default.yaml: 'a: yabba
 
     b: dabba'
+```
+
+## Sort configured lists by `name` attribute
+
+`containers` and `env` lists are sorted by `name` value.
+
+```bash
+$ cat example2.yaml
+```
+
+```YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - |
+          echo "bob"
+        env:
+        - name: BOB
+          value: bill
+        - name: ROBERT
+        - name: BOBBY
+          value: bill
+        image: nginx
+        imagePullPolicy: Always
+        name: nginx
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      - image: ubuntu
+        name: main
+```
+
+```bash
+$ cat example2.yaml | python dsort.py yaml
+```
+
+```YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: default
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: main
+        image: ubuntu
+      - name: nginx
+        image: nginx
+        command:
+        - sh
+        - -c
+        - 'echo "bob"
+
+          '
+        env:
+        - name: BOB
+          value: bill
+        - name: BOBBY
+          value: bill
+        - name: ROBERT
+        imagePullPolicy: Always
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
 ```
