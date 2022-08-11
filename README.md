@@ -9,7 +9,7 @@ Programmed live on Twitch [davur_](https://www.twitch.tv/davur_).
 # Prerequisites
 
 - Python3
-- docopt, PyYAML (`pip install -r requirements`)
+- docopt, PyYAML (`pip install -r requirements.txt`)
 
 # Usage
 
