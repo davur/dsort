@@ -3,12 +3,16 @@
 """dsort sorts YAML/JSON according to a configurable preference
 
 Usage:
-  dsort.py <command> [-dhv] [<file>...]
+  dsort.py [options]
 
 Options:
-  -d, --debug           Print debug information
-  -h, --help            Show this screen.
-  -v, --version         Show version.
+  -s, --sort-order=<keys>  Key sort preference.
+  -d, --debug              Print debug information.
+  -f, --file=<file>...     Path to input file [default: -].
+  -h, --help               Show this screen.
+  -l, --sort-lists         Sorts lists.
+  -o, --output=<outform>   Output format (yaml or json)  [default: yaml].
+  -v, --version            Show version.
 
 """
 from docopt import docopt
@@ -21,23 +25,24 @@ import sys
 
 infile_data = None
 
-config = ['apiVersion', 'kind', 'metadata', 'name', 'namespace', 'image']
-sort_lists = ['containers', 'env']
+key_sort_order = []
+
+sort_lists = False
 
 def compare(a, b):
-    global config
+    global key_sort_order
 
-    if a in config:
-        if b in config:
-            if config.index(a) < config.index(b):
+    if a in key_sort_order:
+        if b in key_sort_order:
+            if key_sort_order.index(a) < key_sort_order.index(b):
                 return -1
-            if config.index(a) > config.index(b):
+            if key_sort_order.index(a) > key_sort_order.index(b):
                 return  1
             else:
                 return 0
         else:
             return -1
-    elif b in config:
+    elif b in key_sort_order:
         return 1
     elif a < b:
         return -1
@@ -46,6 +51,16 @@ def compare(a, b):
     else:
         return 0
 
+
+def sort_list_cmp(x):
+    if isinstance(x, dict):
+        l = [[k, sort_list_cmp(x[k])] for k in x]
+    elif isinstance(x, list):
+        l = [sort_list_cmp(i) for i in x]
+    else:
+        l = x
+    return l
+    
 
 def sort_keys(in_dict):
     global sort_lists
@@ -65,8 +80,9 @@ def sort_keys(in_dict):
                 else:
                     new_list.append(item)
 
-            if key in sort_lists:
-                new_list = sorted(new_list, key=lambda x: x['name'] if 'name' in x else '')
+            if sort_lists: # key in sort_lists:
+                # new_list = sorted(new_list, key=lambda x: x['name'] if 'name' in x else '')
+                new_list = sorted(new_list, key=sort_list_cmp)
             v = new_list
 
         new_dict[key] = v
@@ -85,34 +101,33 @@ def load_infile(infile):
     return sort_keys(infile_data)
 
 
-def main(command, infiles):
+def main(outform, infiles):
 
-    if command not in ['json', 'yaml', 'dict']:
-        print(f"Unknown command '{command}'")
+    if outform not in ['json', 'yaml', 'dict']:
+        print(f"Unknown output format '{outform}'")
         return
 
     for infile in infiles:
         the_data = load_infile(infile)
 
-        # if not command:
-        #    command = "yaml"
-
-        if command == "json":
+        if outform == "json":
             print(json.dumps(the_data, indent=2))
-        elif command == "yaml":
+        elif outform == "yaml":
             print(yaml.dump(the_data, sort_keys=False))
-        elif command == "dict":
+        elif outform == "dict":
             pp(the_data, sort_dicts=False)
 
 
 if __name__ == '__main__':
     arguments = docopt(str(__doc__), version="0.0.1")
-
+    
     if arguments['--debug']:
         print(arguments)
 
-    infiles = arguments['<file>']
-    if not infiles:
-        infiles = ['-']
+    if arguments['--sort-lists']:
+        sort_lists = True
 
-    main(infiles=infiles, command=arguments['<command>'])
+    infiles = arguments['--file']
+    key_sort_order = arguments['--sort-order'].split(',')
+
+    main(infiles=infiles, outform=arguments['--output'])
