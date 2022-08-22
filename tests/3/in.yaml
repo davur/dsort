@@ -1,0 +1,18 @@
+EventCategoryGroupList:
+- EventCategories:
+  - deletion
+  - maintenance
+  - failure
+  - configuration change
+  - low storage
+  - failover
+  - creation
+  SourceType: replication-instance
+- EventCategories:
+  - deletion
+  - failure
+  - configuration change
+  - state change
+  - davur
+  - creation
+  SourceType: replication-task

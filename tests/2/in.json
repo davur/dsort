@@ -1,0 +1,61 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "nginx",
+    "namespace": "default",
+    "labels": {
+      "app": "nginx"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "nginx"
+      }
+    },
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "app": "nginx"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "image": "nginx",
+            "name": "nginx",
+            "command": [
+              "-c",
+              "echo \"bob\"\n",
+              "sh"
+            ],
+            "env": [
+              {
+                "name": "BOB",
+                "value": "bill"
+              },
+              {
+                "name": "BOBBY",
+                "value": "bill"
+              },
+              {
+                "name": "ROBERT"
+              }
+            ],
+            "imagePullPolicy": "Always",
+            "resources": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File"
+          },
+          {
+            "image": "ubuntu",
+            "name": "main"
+          }
+        ]
+      }
+    }
+  }
+}
