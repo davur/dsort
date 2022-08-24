@@ -20,9 +20,7 @@ spec:
       - command:
         - sh
         - -c
-        - |-
-          echo "hello"
-          echo "bob"
+        - echo "hello"
         env:
         - name: BOB
           value: bill

@@ -15,28 +15,35 @@ Programmed live on Twitch [davur_](https://www.twitch.tv/davur_).
 
 ```
 Usage:
-  dsort.py <command> [-dhv] [<file>...]
+  dsort.py [options]
 
 Options:
-  -d, --debug           Print debug information
-  -h, --help            Show this screen.
-  -v, --version         Show version.
+  -s, --sort-order=<keys>   Key sort preference.
+  -d, --debug               Print debug information.
+  -f, --file=<file>...      Path to input file [default: -].
+  -h, --help                Show this screen.
+  -l, --sort-lists=<lists>  Sorts lists.
+  -L, --sort-all-lists      Sorts lists.
+  -o, --output=<outform>    Output format (yaml or json)  [default: yaml].
+  -v, --version             Show version.
+
 ```
 
 # Features
 
-1. Sorts YAML keys alphabetically, _except_ for keys specified in config.
+1. Sorts YAML keys alphabetically, _except_ for keys specified desired via
+   `--sort-order` parameter
 
-	```Python
-	config = ['apiVersion', 'kind', 'metadata', 'name', 'namespace', 'image']
-	```
-   
+   ```Bash
+   python -- dsort/__init__.py --sort-order=apiVersion,kind,metadata,name,namespace,image < tests/2/in.yaml
+   ```
+
    These keys are brought to the top of their respective stansas.
 
 2. Sorts _some_ list elements by their `"name"`-value (if present)
 
-	```Python
-	sort_lists = ['containers', 'env']
+	```Bash
+   python -- dsort/__init__.py --sort-lists=containers,env --sort-order=apiVersion,kind,metadata,name,namespace,image < tests/2/in.yaml
 	```
 
 
@@ -46,7 +53,7 @@ Options:
 ## Bring preferred keys to the top
 
 ```bash
-$ cat example.yaml
+$ cat tests/1/in.yaml
 ```
 
 ```YAML
@@ -65,7 +72,7 @@ metadata:
 ```
 
 ```bash
-$ cat example.yaml | python dsort.py yaml
+$ cat tests/1/in.yaml | python dsort/__init__.py --sort-order=apiVersion,kind,metadata,name,namespace,image
 ```
 
 ```YAML
@@ -85,7 +92,7 @@ data:
 
 ## Sort configured lists by `name` attribute
 
-`containers` and `env` lists are sorted by `name` value.
+We want `containers` and `env` lists to be sorted by `name` value.
 
 ```bash
 $ cat example2.yaml
@@ -132,8 +139,11 @@ spec:
         name: main
 ```
 
+Prioritise `name` key (`--sort-order=name,image,apiVersion,kind,metadata,namespace`)
+and specify lists to be sorted (`--sort-lists=containers,env`)
+
 ```bash
-$ cat example2.yaml | python dsort.py yaml
+$ python -- dsort/__init__.py --sort-lists=containers,env --sort-order=name,image,apiVersion,kind,metadata,namespace -f - < tests/2/in.yaml
 ```
 
 ```YAML
@@ -163,9 +173,7 @@ spec:
         command:
         - sh
         - -c
-        - 'echo "bob"
-
-          '
+        - echo "bob"
         env:
         - name: BOB
           value: bill
