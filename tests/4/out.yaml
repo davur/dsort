@@ -1,0 +1,10 @@
+Items:
+- description: |-
+    Dumping multiline string gives incorrect result
+    Similar to what is reported here https://github.com/yaml/pyyaml/issues/246
+  examples:
+  - |
+    Hi!
+    Second Line
+    Another Line
+  title: Test multiline handling

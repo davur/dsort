@@ -24,9 +24,9 @@ spec:
         command:
         - sh
         - -c
-        - 'echo "bob"
-
-          '
+        - |-
+          echo "hello"
+          echo "bob"
         env:
         - name: BOB
           value: bill

@@ -20,7 +20,8 @@ spec:
       - command:
         - sh
         - -c
-        - |
+        - |-
+          echo "hello"
           echo "bob"
         env:
         - name: BOB

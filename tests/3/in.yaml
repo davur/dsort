@@ -5,7 +5,6 @@ EventCategoryGroupList:
   - failure
   - configuration change
   - low storage
-  - failover
   - creation
   SourceType: replication-instance
 - EventCategories:
@@ -13,6 +12,6 @@ EventCategoryGroupList:
   - failure
   - configuration change
   - state change
-  - davur
   - creation
+  - failover
   SourceType: replication-task
