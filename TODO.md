@@ -1,17 +1,20 @@
 
 # dsort TODOs
 
+- [ ] Make sort order configurable via config file (e.g. TOML file)
+
 - [ ] Support JSON input
+
+    Support JSON input via -f bla.json (JSON format implied from extension)
+    or read, then try parsing as json, or yaml
+
     Read input and parse json or yaml... investigate how
     kubectl seemlessly handles both:
         k create -f - < tests/2/in.yaml
         k create -f - < tests/2/in.json
 
-
 - [ ] Improve sort functions (key sort and list sort)
     Improved, but still got room for further improvement
-
-- [ ] Make sort order configurable via config file (e.g. TOML file)
 
 - [ ] Make list sorting context aware
 
@@ -30,7 +33,12 @@
           echo "bob"
     ```
 
+- [ ] Add githooks to run tests on commit or push
+
 - [ ] Add CI/CD
+    Github Actions?
+
+- [ ] Push package
 
 - [x] Rewrite to remove global vars
 - [x] Add tests
